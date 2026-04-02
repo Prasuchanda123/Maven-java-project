@@ -7,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -14,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build WAR') {
             steps {
                 sh 'mvn clean package'
             }
@@ -26,9 +27,19 @@ pipeline {
             }
         }
 
-        stage('Archive Artifact') {
+        stage('Archive WAR') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                sh '''
+                    curl -u tomcat:tomcat \
+                    --upload-file target/java-docker-app.war \
+                    "http://20.220.32.127:8080/manager/text/deploy?path=/javaapp&update=true"
+                '''
             }
         }
     }
