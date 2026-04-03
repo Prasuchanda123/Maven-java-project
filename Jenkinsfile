@@ -1,17 +1,12 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'MAVEN_HOME'
-        jdk 'JAVA_HOME'
-    }
-
     stages {
 
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Prasunachanda123/Maven-java-project.git'
+                    url: 'https://github.com/Prasuchanda123/Maven-java-project.git'
             }
         }
 
@@ -37,7 +32,7 @@ pipeline {
             steps {
                 sh '''
                     curl -u tomcat:tomcat \
-                    --upload-file target/java-docker-app.war \
+                    --upload-file target/*.war \
                     "http://20.220.32.127:8080/manager/text/deploy?path=/javaapp&update=true"
                 '''
             }
